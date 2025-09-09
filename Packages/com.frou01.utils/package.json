@@ -1,11 +1,11 @@
 {
   "name": "com.frou01.utils",
   "displayName": "frou01.Utilty",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "unity": "2022.3",
   "description": "Some tools for Unity. Fix nasty bug of Editor, Optimize on runtime, Simple but important gimics for VRC.",
   "vpmDependencies": {
-    "com.vrchat.worlds": "3.4.1"
+    "com.vrchat.worlds": ">=3.7.4"
   },
   "author": {
     "name": "frou01",
@@ -14,7 +14,6 @@
   "legacyFolders": {},
   "legacyFiles": {},
   "dependencies": {
-    "com.unity.cinemachine": "2.9.7",
-    "com.vrchat.worlds": "3.7.4"
+    "com.unity.cinemachine": ">=2.9.7"
   }
 }
