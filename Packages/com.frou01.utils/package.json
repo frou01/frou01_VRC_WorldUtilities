@@ -14,6 +14,6 @@
   "legacyFolders": {},
   "legacyFiles": {},
   "dependencies": {
-    "com.unity.cinemachine": ">=2.9.7"
+    "com.unity.cinemachine": "2.9.7"
   }
 }
