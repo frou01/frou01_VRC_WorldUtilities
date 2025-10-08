@@ -23,6 +23,14 @@ public class AutoDisableSoundPlayer : UdonSharpBehaviour
             targetAudioSource.enabled = false;
         }
     }
+    public void Play(AudioClip clip)
+    {
+        this.enabled = true;
+        targetAudioSource.enabled = true;
+        targetAudioSource.clip = clip;
+        targetAudioSource.Play();
+        cnt = AutoDisableTime;
+    }
     public void PlayOnshot(AudioClip clip)
     {
         this.enabled = true;
