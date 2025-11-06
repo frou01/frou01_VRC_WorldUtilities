@@ -40,7 +40,8 @@ public class InteractActivator_HandSetter : IProcessSceneWithReport
             {
                 if(targetOBJ == null)
                 {
-                    Debug.LogError("Null element on " + CUC.gameObject.name);
+                    Debug.LogError("Null element on " + (GetPath(CUC.transform)));
+                    continue;
                 }
                 UdonBehaviour[] udonBehaviours = targetOBJ.GetComponents<UdonBehaviour>();
                 foreach (UdonBehaviour udon in udonBehaviours)
@@ -174,5 +175,16 @@ public class InteractActivator_HandSetter : IProcessSceneWithReport
     public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
     {
         return true;
+    }
+
+    private string GetPath(Transform t)
+    {
+        string path = t.name;
+        while (t.parent)
+        {
+            path = t.parent.name + path;
+            t = t.parent;
+        }
+        return path;
     }
 }
