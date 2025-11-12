@@ -9,10 +9,6 @@ public class Teleporter : UdonSharpBehaviour
 {
     public Transform target;
     public Vector3 Offset = new Vector3(0, 1, 0);
-    void Start()
-    {
-        
-    }
 
     public override void Interact()
     {

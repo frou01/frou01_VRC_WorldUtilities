@@ -8,10 +8,6 @@ public class AnimatorInterupter : UdonSharpBehaviour
 {
     [UdonSynced] bool interrupt = false;
     [SerializeField] UdonBehaviour[] targetUdons;
-    void Start()
-    {
-
-    }
 
     public void interrputionEventToggleTrue()
     {

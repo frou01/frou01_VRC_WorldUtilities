@@ -9,10 +9,6 @@ public class AutoDisableSoundPlayer : UdonSharpBehaviour
     [SerializeField] AudioSource targetAudioSource;
     [SerializeField] float AutoDisableTime;
     float cnt;
-    void Start()
-    {
-        
-    }
 
     public void Update()
     {
