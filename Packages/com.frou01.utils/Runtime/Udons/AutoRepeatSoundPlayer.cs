@@ -15,10 +15,11 @@ public class AutoRepeatSoundPlayer : UdonSharpBehaviour
 
     public void CheckPlaying()
     {
+        if (gameObject.activeInHierarchy) SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
+        else return;
         if (targetAudioSource.enabled == true && !targetAudioSource.isPlaying)
         {
             targetAudioSource.Play();
         }
-        if (gameObject.activeInHierarchy) SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
     }
 }
