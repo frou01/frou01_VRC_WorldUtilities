@@ -7,10 +7,6 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class ColliderOcclusionPortal : UdonSharpBehaviour
 {
-    void Start()
-    {
-        
-    }
     public void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerChaser>() != null)
