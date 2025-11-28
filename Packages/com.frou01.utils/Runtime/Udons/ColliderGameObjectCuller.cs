@@ -9,9 +9,6 @@ public class ColliderGameObjectCuller : UdonSharpBehaviour
 {
     public GameObject[] objects;
     public bool isStaticMode;
-    void Start()
-    {
-    }
 
     public void OnTriggerEnter(Collider other)
     {

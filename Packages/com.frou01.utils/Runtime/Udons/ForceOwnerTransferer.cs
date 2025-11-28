@@ -15,7 +15,7 @@ public class ForceOwnerTransferer : UdonSharpBehaviour
 
     public override void Interact()
     {
-        Networking.SetOwner(Networking.LocalPlayer, targetObject);
+        if(targetObject != null) Networking.SetOwner(Networking.LocalPlayer, targetObject);
         foreach(GameObject go in targetObjects)
         {
             Networking.SetOwner(Networking.LocalPlayer, go);

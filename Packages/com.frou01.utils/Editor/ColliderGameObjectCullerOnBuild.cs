@@ -24,12 +24,22 @@ public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport , IVRCSDK
         }
         foreach (ColliderGameObjectCuller obj in target)
         {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            if (obj != null)
             {
-                Debug.Log("SetUp" + obj.name);
-                foreach (GameObject go in obj.objects)
+                if (obj.gameObject.activeInHierarchy)
                 {
-                    go.SetActive(false);
+                    Debug.Log("SetUp" + obj.name);
+                    foreach (GameObject go in obj.objects)
+                    {
+                        if (go == null)
+                        {
+                            Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
+                        }
+                        else
+                        {
+                            go.SetActive(false);
+                        }
+                    }
                 }
                 if(obj.isStaticMode) StaticBatchingUtility.Combine(obj.objects,null);
             }
@@ -42,6 +52,17 @@ public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport , IVRCSDK
                 obj.GetComponent<OcclusionPortal>().open = false;
             }
         }
+    }
+
+    private string GetPath(Transform t)
+    {
+        string path = t.name;
+        while (t.parent)
+        {
+            path = t.parent.name + path;
+            t = t.parent;
+        }
+        return path;
     }
 
     void Proceed(Transform parent)
