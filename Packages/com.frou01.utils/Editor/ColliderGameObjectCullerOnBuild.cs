@@ -24,18 +24,21 @@ public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport , IVRCSDK
         }
         foreach (ColliderGameObjectCuller obj in target)
         {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            if (obj != null)
             {
-                Debug.Log("SetUp" + obj.name);
-                foreach (GameObject go in obj.objects)
+                if (obj.gameObject.activeInHierarchy)
                 {
-                    if(go == null)
+                    Debug.Log("SetUp" + obj.name);
+                    foreach (GameObject go in obj.objects)
                     {
-                        Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
-                    }
-                    else
-                    {
-                        go.SetActive(false);
+                        if (go == null)
+                        {
+                            Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
+                        }
+                        else
+                        {
+                            go.SetActive(false);
+                        }
                     }
                 }
                 if(obj.isStaticMode) StaticBatchingUtility.Combine(obj.objects,null);
