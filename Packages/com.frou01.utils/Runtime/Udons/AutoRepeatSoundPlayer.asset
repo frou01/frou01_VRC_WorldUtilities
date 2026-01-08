@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: AutoRepeatSoundPlayer
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: b1d4d7451b8c13f4aa9ddb452776dc36,
-    type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: b1d4d7451b8c13f4aa9ddb452776dc36, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 40502b4c1ff34b94cb5a475a13421fa5, type: 3}
