@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using static Cinemachine.CinemachinePathBase;
 
 public class terrainDigger : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class terrainDigger : MonoBehaviour
 
     public void DigTerrain()
     {
+        if (range <= 0) range = 10;
         TerrainData terrainData = target.terrainData;
         float[,] heights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
         int pickSquarex = 1 + (int)(range / terrainData.size.x * (float)(heights.GetLength(0)-1));
@@ -101,6 +103,34 @@ public class terrainDigger : MonoBehaviour
         terrainData.SetHeights(0, 0, heights);
         target.terrainData = terrainData;
         EditorUtility.ClearProgressBar();
+
+    }
+    public void OnDrawGizmosSelected()
+    {
+        if (path == null) return;
+        Gizmos.color = new Color(0f, 0, 1f, 1f);
+        float t = path.ToNativePathUnits(start, PositionUnits.Distance);
+
+        Vector3 PositionAtT;
+        Quaternion OrientationAtT;
+        PositionAtT = path.EvaluatePositionAtUnit(t, PositionUnits.PathUnits);
+        OrientationAtT = path.EvaluateOrientationAtUnit(t, PositionUnits.PathUnits).normalized;
+        Gizmos.DrawLine(
+            PositionAtT + OrientationAtT * (-Vector3.right),
+            PositionAtT + OrientationAtT * (Vector3.right));
+        Gizmos.DrawLine(
+            PositionAtT + OrientationAtT * (-Vector3.up),
+            PositionAtT + OrientationAtT * (Vector3.up));
+        Gizmos.color = new Color(1f, 0, 0f, 1f);
+        t = path.ToNativePathUnits(end, PositionUnits.Distance);
+        PositionAtT = path.EvaluatePositionAtUnit(t, PositionUnits.PathUnits);
+        OrientationAtT = path.EvaluateOrientationAtUnit(t, PositionUnits.PathUnits).normalized;
+        Gizmos.DrawLine(
+            PositionAtT + OrientationAtT * (-Vector3.right),
+            PositionAtT + OrientationAtT * (Vector3.right));
+        Gizmos.DrawLine(
+            PositionAtT + OrientationAtT * (-Vector3.up),
+            PositionAtT + OrientationAtT * (Vector3.up));
 
     }
 }

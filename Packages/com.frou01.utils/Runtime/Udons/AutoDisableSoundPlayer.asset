@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: AutoDisableSoundPlayer
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: c6d19540d96e65344afc765014c26bcf,
-    type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: c6d19540d96e65344afc765014c26bcf, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 19e5c70db52504146aa5254236a35c82, type: 3}
