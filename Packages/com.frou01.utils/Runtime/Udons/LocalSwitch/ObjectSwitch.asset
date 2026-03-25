@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: objectSwitch
+  m_Name: ObjectSwitch
   m_EditorClassIdentifier: 
   serializedUdonProgramAsset: {fileID: 11400000, guid: ee58e6a815fdde84d88720b755646551, type: 2}
   udonAssembly: 
@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 1
   hasInteractEvent: 1
-  scriptID: 5552692923520852881
+  scriptID: 6846241133063173660
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

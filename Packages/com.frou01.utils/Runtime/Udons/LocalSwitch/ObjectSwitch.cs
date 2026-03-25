@@ -5,7 +5,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-public class objectSwitch : UdonSharpBehaviour
+public class ObjectSwitch : UdonSharpBehaviour
 {
     public GameObject targetObj;
     public GameObject[] targetObjs;
