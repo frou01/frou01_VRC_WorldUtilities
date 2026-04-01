@@ -5,8 +5,10 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+[RequireComponent(typeof(Collider))]
 public class ColliderGameObjectCuller : UdonSharpBehaviour
 {
+    [Header("If PlayerChaser enter collider, this udon activate assigned GameObjects.")]
     public GameObject[] objects;
     public bool isStaticMode;
 
