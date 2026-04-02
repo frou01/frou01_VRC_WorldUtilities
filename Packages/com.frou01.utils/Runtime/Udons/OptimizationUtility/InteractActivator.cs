@@ -103,6 +103,11 @@ public class InteractActivator : UdonSharpBehaviour
     {
     }
 
+    private void OnDisable()
+    {
+        changeColliderState(false);
+    }
+
 
     private void OnDrawGizmosSelected()
     {
