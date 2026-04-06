@@ -1,7 +1,10 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Hierarchy_Optimizer : MonoBehaviour{
-    public Transform target;
-    public bool forceProceed = false;
+namespace frou01.util
+{
+    public class Hierarchy_Optimizer : MonoBehaviour
+    {
+        public Transform target;
+        public bool forceProceed = false;
+    }
 }

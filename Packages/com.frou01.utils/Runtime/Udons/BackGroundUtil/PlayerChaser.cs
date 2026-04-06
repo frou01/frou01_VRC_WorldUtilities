@@ -1,51 +1,53 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using static VRC.SDKBase.VRCPlayerApi;
 
-public class PlayerChaser : UdonSharpBehaviour
+namespace frou01.util
 {
-    VRCPlayerApi playerApi;
-    public Transform HandL;
-    public Transform HandR;
-    public Transform Head;
-    [System.NonSerialized]public bool PlayerPositionScriptControlMode;
-    void Start()
+    public class PlayerChaser : UdonSharpBehaviour
     {
-        playerApi = Networking.LocalPlayer;
-    }
-
-    TrackingData trackingData;
-
-    public void LateUpdate()
-    {
-        if (!PlayerPositionScriptControlMode)
+        VRCPlayerApi playerApi;
+        public Transform HandL;
+        public Transform HandR;
+        public Transform Head;
+        [System.NonSerialized] public bool PlayerPositionScriptControlMode;
+        void Start()
         {
-            if (playerApi != null && !playerApi.IsValid()) playerApi = null;
-            if (playerApi != null) gameObject.transform.position = playerApi.GetPosition();
-        }
-    }
-    public override void PostLateUpdate()
-    {
-        if (playerApi != null)
-        {
-            //if (!PlayerPositionScriptControlMode)
-            //{
-            //    gameObject.transform.rotation = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.Origin).rotation;
-            //}
-            trackingData = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.RightHand);
-            HandR.position = trackingData.position;
-            HandR.rotation = trackingData.rotation;
-
-            trackingData = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.LeftHand);
-            HandL.position = trackingData.position;
-            HandL.rotation = trackingData.rotation;
-
-            trackingData = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.Head);
-            Head.position = trackingData.position;
-            Head.rotation = trackingData.rotation;
+            playerApi = Networking.LocalPlayer;
         }
 
+        TrackingData trackingData;
+
+        public void LateUpdate()
+        {
+            if (!PlayerPositionScriptControlMode)
+            {
+                if (playerApi != null && !playerApi.IsValid()) playerApi = null;
+                if (playerApi != null) gameObject.transform.position = playerApi.GetPosition();
+            }
+        }
+        public override void PostLateUpdate()
+        {
+            if (playerApi != null)
+            {
+                //if (!PlayerPositionScriptControlMode)
+                //{
+                //    gameObject.transform.rotation = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.Origin).rotation;
+                //}
+                trackingData = playerApi.GetTrackingData(TrackingDataType.RightHand);
+                HandR.position = trackingData.position;
+                HandR.rotation = trackingData.rotation;
+
+                trackingData = playerApi.GetTrackingData(TrackingDataType.LeftHand);
+                HandL.position = trackingData.position;
+                HandL.rotation = trackingData.rotation;
+
+                trackingData = playerApi.GetTrackingData(TrackingDataType.Head);
+                Head.position = trackingData.position;
+                Head.rotation = trackingData.rotation;
+            }
+
+        }
     }
 }

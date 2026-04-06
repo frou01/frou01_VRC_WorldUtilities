@@ -1,34 +1,36 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-[RequireComponent(typeof(Collider))]
-public class ColliderGameObjectCuller : UdonSharpBehaviour
+namespace frou01.util
 {
-    [Header("If PlayerChaser enter collider, this udon activate assigned GameObjects.")]
-    public GameObject[] objects;
-    public bool isStaticMode;
-
-    public void OnTriggerEnter(Collider other)
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+    [RequireComponent(typeof(Collider))]
+    public class ColliderGameObjectCuller : UdonSharpBehaviour
     {
-        if(other.GetComponent<PlayerChaser>() != null)
+        [Header("If PlayerChaser enter collider, this udon activate assigned GameObjects.")]
+        public GameObject[] objects;
+        public bool isStaticMode;
+
+        public void OnTriggerEnter(Collider other)
         {
-            foreach (GameObject go in objects)
+            if (other.GetComponent<PlayerChaser>() != null)
             {
-                go.SetActive(true);
+                foreach (GameObject go in objects)
+                {
+                    go.SetActive(true);
+                }
             }
         }
-    }
-    public void OnTriggerExit(Collider other)
-    {
-        if (other.GetComponent<PlayerChaser>() != null)
+        public void OnTriggerExit(Collider other)
         {
-            foreach (GameObject go in objects)
+            if (other.GetComponent<PlayerChaser>() != null)
             {
-                go.SetActive(false);
+                foreach (GameObject go in objects)
+                {
+                    go.SetActive(false);
+                }
             }
         }
     }

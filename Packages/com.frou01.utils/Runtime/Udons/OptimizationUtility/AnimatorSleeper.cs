@@ -1,10 +1,9 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace frou01.GrabController
+namespace frou01.util
 {
     public class AnimatorSleeper : UdonSharpBehaviour
     {
@@ -35,7 +34,7 @@ namespace frou01.GrabController
             {
                 delayer = 0;
             }
-            this.enabled = false;
+            enabled = false;
         }
     }
 }

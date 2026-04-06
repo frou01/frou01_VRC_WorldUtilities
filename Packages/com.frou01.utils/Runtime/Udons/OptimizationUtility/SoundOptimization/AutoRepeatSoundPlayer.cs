@@ -1,25 +1,27 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
-public class AutoRepeatSoundPlayer : UdonSharpBehaviour
+namespace frou01.util
 {
-    //リピート保証付きループ音源
-    [SerializeField] AudioSource targetAudioSource;
-
-    private void OnEnable()
+    public class AutoRepeatSoundPlayer : UdonSharpBehaviour
     {
-        targetAudioSource.Play();
-        SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
-    }
+        //リピート保証付きループ音源
+        [SerializeField] AudioSource targetAudioSource;
 
-    public void CheckPlaying()
-    {
-        if (gameObject.activeInHierarchy) SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
-        else return;
-        if (targetAudioSource.enabled == true && !targetAudioSource.isPlaying)
+        private void OnEnable()
         {
             targetAudioSource.Play();
+            SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
+        }
+
+        public void CheckPlaying()
+        {
+            if (gameObject.activeInHierarchy) SendCustomEventDelayedSeconds(nameof(CheckPlaying), 1);
+            else return;
+            if (targetAudioSource.enabled == true && !targetAudioSource.isPlaying)
+            {
+                targetAudioSource.Play();
+            }
         }
     }
 }

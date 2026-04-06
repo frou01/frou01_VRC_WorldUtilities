@@ -8,46 +8,49 @@ using UnityEditor;
 
 using VRC.Udon;
 
-public class Revert_SerializedUdonProgramSource : MonoBehaviour
+namespace frou01.util
 {
-    // Start is called before the first frame update
-    void Start()
+    public class Revert_SerializedUdonProgramSource : MonoBehaviour
     {
-        
-    }
-
-
-    string path = "serializedProgramAsset";
-    public void Revert()
-    {
-        GameObject[] rootObjects = 
-        gameObject.scene.GetRootGameObjects();
-
-        foreach (GameObject anrootObject in rootObjects)
+        // Start is called before the first frame update
+        void Start()
         {
-            Proceed(anrootObject.transform);
+
         }
-    }
 
-    void Proceed(Transform parent)
-    {
-        if (parent.gameObject.GetComponent<UdonBehaviour>() != null)
-            if (PrefabUtility.IsPartOfPrefabInstance(parent.gameObject))
+
+        string path = "serializedProgramAsset";
+        public void Revert()
+        {
+            GameObject[] rootObjects =
+            gameObject.scene.GetRootGameObjects();
+
+            foreach (GameObject anrootObject in rootObjects)
             {
+                Proceed(anrootObject.transform);
+            }
+        }
 
-                foreach (UdonBehaviour anUdon in parent.gameObject.GetComponents<UdonBehaviour>())
+        void Proceed(Transform parent)
+        {
+            if (parent.gameObject.GetComponent<UdonBehaviour>() != null)
+                if (PrefabUtility.IsPartOfPrefabInstance(parent.gameObject))
                 {
-                    if (PrefabUtility.IsPartOfPrefabInstance(anUdon))
+
+                    foreach (UdonBehaviour anUdon in parent.gameObject.GetComponents<UdonBehaviour>())
                     {
-                        var serializedObject = new SerializedObject(anUdon);
-                        SerializedProperty anProperty = serializedObject.FindProperty(path);
-                        if (anProperty != null) PrefabUtility.RevertPropertyOverride(anProperty, InteractionMode.AutomatedAction);
+                        if (PrefabUtility.IsPartOfPrefabInstance(anUdon))
+                        {
+                            var serializedObject = new SerializedObject(anUdon);
+                            SerializedProperty anProperty = serializedObject.FindProperty(path);
+                            if (anProperty != null) PrefabUtility.RevertPropertyOverride(anProperty, InteractionMode.AutomatedAction);
+                        }
                     }
                 }
+            foreach (Transform obj in parent)
+            {
+                Proceed(obj);
             }
-        foreach (Transform obj in parent)
-        {
-            Proceed(obj);
         }
     }
 }

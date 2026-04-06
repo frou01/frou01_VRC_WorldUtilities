@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DynamicBatching : MonoBehaviour
+namespace frou01.util
 {
-    public GameObject[] batchingObjects;
+    public class DynamicBatching : MonoBehaviour
+    {
+        public GameObject[] batchingObjects;
+    }
 }

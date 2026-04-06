@@ -7,82 +7,85 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport , IVRCSDKBuildRequestedCallback
+namespace frou01.util.editor
 {
-    public int callbackOrder => 0;
-
-
-    public List<ColliderGameObjectCuller> target = new List<ColliderGameObjectCuller>();
-    public List<ColliderOcclusionPortal> target2 = new List<ColliderOcclusionPortal>();
-
-
-    public void OnProcessScene(Scene scene, BuildReport report)
+    public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
     {
-        foreach (GameObject obj in scene.GetRootGameObjects())
+        public int callbackOrder => 0;
+
+
+        public List<ColliderGameObjectCuller> target = new List<ColliderGameObjectCuller>();
+        public List<ColliderOcclusionPortal> target2 = new List<ColliderOcclusionPortal>();
+
+
+        public void OnProcessScene(Scene scene, BuildReport report)
         {
-            Proceed(obj.transform);
-        }
-        foreach (ColliderGameObjectCuller obj in target)
-        {
-            if (obj != null)
+            foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                if (obj.gameObject.activeInHierarchy)
+                Proceed(obj.transform);
+            }
+            foreach (ColliderGameObjectCuller obj in target)
+            {
+                if (obj != null)
                 {
-                    Debug.Log("SetUp" + obj.name);
-                    foreach (GameObject go in obj.objects)
+                    if (obj.gameObject.activeInHierarchy)
                     {
-                        if (go == null)
+                        Debug.Log("SetUp" + obj.name);
+                        foreach (GameObject go in obj.objects)
                         {
-                            Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
-                        }
-                        else
-                        {
-                            go.SetActive(false);
+                            if (go == null)
+                            {
+                                Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
+                            }
+                            else
+                            {
+                                go.SetActive(false);
+                            }
                         }
                     }
+                    if (obj.isStaticMode) StaticBatchingUtility.Combine(obj.objects, null);
                 }
-                if(obj.isStaticMode) StaticBatchingUtility.Combine(obj.objects,null);
             }
-        }
-        foreach (ColliderOcclusionPortal obj in target2)
-        {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            foreach (ColliderOcclusionPortal obj in target2)
             {
-                Debug.Log("SetUp" + obj.name);
-                obj.GetComponent<OcclusionPortal>().open = false;
+                if (obj != null && obj.gameObject.activeInHierarchy)
+                {
+                    Debug.Log("SetUp" + obj.name);
+                    obj.GetComponent<OcclusionPortal>().open = false;
+                }
             }
         }
-    }
 
-    private string GetPath(Transform t)
-    {
-        string path = t.name;
-        while (t.parent)
+        private string GetPath(Transform t)
         {
-            path = t.parent.name + path;
-            t = t.parent;
+            string path = t.name;
+            while (t.parent)
+            {
+                path = t.parent.name + path;
+                t = t.parent;
+            }
+            return path;
         }
-        return path;
-    }
 
-    void Proceed(Transform parent)
-    {
-        if (parent.gameObject.GetComponent<ColliderGameObjectCuller>() != null)
+        void Proceed(Transform parent)
         {
-            target.Add(parent.gameObject.GetComponent<ColliderGameObjectCuller>());
+            if (parent.gameObject.GetComponent<ColliderGameObjectCuller>() != null)
+            {
+                target.Add(parent.gameObject.GetComponent<ColliderGameObjectCuller>());
+            }
+            if (parent.gameObject.GetComponent<ColliderOcclusionPortal>() != null)
+            {
+                target2.Add(parent.gameObject.GetComponent<ColliderOcclusionPortal>());
+            }
+            foreach (Transform obj in parent)
+            {
+                Proceed(obj);
+            }
         }
-        if (parent.gameObject.GetComponent<ColliderOcclusionPortal>() != null)
-        {
-            target2.Add(parent.gameObject.GetComponent<ColliderOcclusionPortal>());
-        }
-        foreach (Transform obj in parent)
-        {
-            Proceed(obj);
-        }
-    }
 
-    public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
-    {
-        return true;
+        public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
+        {
+            return true;
+        }
     }
 }

@@ -5,62 +5,66 @@ using UnityEngine;
 using VRC.SDKBase.Network;
 using VRC.Udon;
 using static VRC.SDKBase.Networking;
-#if (UNITY_EDITOR) 
 
-public class NoneSyncexcluder : MonoBehaviour
+namespace frou01.util
 {
-    public VRCSceneDescriptor target;
+#if (UNITY_EDITOR)
 
-    public void Detach()
+    public class NoneSyncexcluder : MonoBehaviour
     {
-        List<NetworkIDPair> CheckingList = target.NetworkIDCollection;
-        List<NetworkIDPair> CheckedList = new List<NetworkIDPair>();
-        string udonbe = "VRC.Udon.UdonBehaviour";
-        string pickup = "VRC.SDK3.Components.VRCPickup";
-        bool OK = false;
-        foreach (NetworkIDPair pair in CheckingList)
+        public VRCSceneDescriptor target;
+
+        public void Detach()
         {
-            OK = false;
-            if (pair.gameObject)
+            List<NetworkIDPair> CheckingList = target.NetworkIDCollection;
+            List<NetworkIDPair> CheckedList = new List<NetworkIDPair>();
+            string udonbe = "VRC.Udon.UdonBehaviour";
+            string pickup = "VRC.SDK3.Components.VRCPickup";
+            bool OK = false;
+            foreach (NetworkIDPair pair in CheckingList)
             {
-
-                foreach (string anPath in pair.SerializedTypeNames)
+                OK = false;
+                if (pair.gameObject)
                 {
-                    if (!anPath.Equals(udonbe) && !anPath.Equals(pickup))
+
+                    foreach (string anPath in pair.SerializedTypeNames)
                     {
-                        OK = true;
-                        break;
+                        if (!anPath.Equals(udonbe) && !anPath.Equals(pickup))
+                        {
+                            OK = true;
+                            break;
+                        }
                     }
-                }
-                if (OK)
-                {
-                    pair.ID = 10 + CheckedList.Count;
-                    CheckedList.Add(pair);
-                    continue;
-                }
-
-                UdonBehaviour[] Udons = pair.gameObject.GetComponents<UdonBehaviour>();
-                foreach (UdonBehaviour anUdon in Udons)
-                {
-                    if (anUdon.SyncMethod != SyncType.None)
+                    if (OK)
                     {
-                        OK = true;
+                        pair.ID = 10 + CheckedList.Count;
+                        CheckedList.Add(pair);
+                        continue;
                     }
-                }
-                if (OK)
-                {
-                    pair.ID = 10 + CheckedList.Count;
-                    CheckedList.Add(pair);
-                    continue;
-                }
 
-                if (!OK)
-                {
-                    Debug.Log("NoneSync, but assigned " + pair.gameObject.name);
+                    UdonBehaviour[] Udons = pair.gameObject.GetComponents<UdonBehaviour>();
+                    foreach (UdonBehaviour anUdon in Udons)
+                    {
+                        if (anUdon.SyncMethod != SyncType.None)
+                        {
+                            OK = true;
+                        }
+                    }
+                    if (OK)
+                    {
+                        pair.ID = 10 + CheckedList.Count;
+                        CheckedList.Add(pair);
+                        continue;
+                    }
+
+                    if (!OK)
+                    {
+                        Debug.Log("NoneSync, but assigned " + pair.gameObject.name);
+                    }
                 }
             }
+            target.NetworkIDCollection = CheckedList;
         }
-        target.NetworkIDCollection = CheckedList;
     }
 }
 

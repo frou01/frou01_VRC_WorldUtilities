@@ -1,10 +1,9 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-namespace frou01.GrabController
+namespace frou01.util
 {
     public class OwnerLinker : UdonSharpBehaviour
     {
@@ -12,7 +11,7 @@ namespace frou01.GrabController
         public GameObject[] objects;
         //[Header("拒否/許可を応答するUdon")]
         //public UdonBehaviour[] Udons;
-        public override void OnOwnershipTransferred(VRC.SDKBase.VRCPlayerApi player)
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
         {
             if (Networking.LocalPlayer != player) return;
 

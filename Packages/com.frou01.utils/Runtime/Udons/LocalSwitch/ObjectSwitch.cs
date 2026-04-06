@@ -1,24 +1,26 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
-[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-public class ObjectSwitch : UdonSharpBehaviour
+namespace frou01.util
 {
-    public GameObject targetObj;
-    public GameObject[] targetObjs;
-    void Start()
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
+    public class ObjectSwitch : UdonSharpBehaviour
     {
-
-    }
-    public override void Interact()
-    {
-        if (targetObj != null) targetObj.SetActive(!targetObj.activeSelf);
-        foreach (GameObject obj in targetObjs)
+        public GameObject targetObj;
+        public GameObject[] targetObjs;
+        void Start()
         {
-            if (obj != null)
+
+        }
+        public override void Interact()
+        {
+            if (targetObj != null) targetObj.SetActive(!targetObj.activeSelf);
+            foreach (GameObject obj in targetObjs)
             {
-                obj.SetActive(!obj.activeSelf);
+                if (obj != null)
+                {
+                    obj.SetActive(!obj.activeSelf);
+                }
             }
         }
     }

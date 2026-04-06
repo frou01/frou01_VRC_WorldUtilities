@@ -1,37 +1,39 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using VRC.SDKBase;
 using static VRC.SDKBase.VRCPlayerApi;
 
-public class VRRootChaser : UdonSharpBehaviour
+namespace frou01.util
 {
-    VRCPlayerApi playerApi;
-    [System.NonSerialized] public bool PlayerPositionScriptControlMode;
-    void Start()
+    public class VRRootChaser : UdonSharpBehaviour
     {
-        playerApi = Networking.LocalPlayer;
-    }
-
-    TrackingData trackingData;
-
-    public void LateUpdate()
-    {
-        if (!PlayerPositionScriptControlMode)
+        VRCPlayerApi playerApi;
+        [System.NonSerialized] public bool PlayerPositionScriptControlMode;
+        void Start()
         {
-            if (playerApi != null && !playerApi.IsValid()) playerApi = null;
+            playerApi = Networking.LocalPlayer;
         }
-    }
-    public override void PostLateUpdate()
-    {
-        if (playerApi != null)
+
+        TrackingData trackingData;
+
+        public void LateUpdate()
         {
             if (!PlayerPositionScriptControlMode)
             {
-                trackingData = playerApi.GetTrackingData(VRCPlayerApi.TrackingDataType.Origin);
-                gameObject.transform.rotation = trackingData.rotation;
-                gameObject.transform.position = trackingData.position;
+                if (playerApi != null && !playerApi.IsValid()) playerApi = null;
             }
         }
+        public override void PostLateUpdate()
+        {
+            if (playerApi != null)
+            {
+                if (!PlayerPositionScriptControlMode)
+                {
+                    trackingData = playerApi.GetTrackingData(TrackingDataType.Origin);
+                    gameObject.transform.rotation = trackingData.rotation;
+                    gameObject.transform.position = trackingData.position;
+                }
+            }
 
+        }
     }
 }

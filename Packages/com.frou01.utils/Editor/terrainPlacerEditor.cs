@@ -6,18 +6,21 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(terrainPlacer))]
-public class terrainPlacerEditor : Editor
+namespace frou01.util.editor
 {
-
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(terrainPlacer))]
+    public class terrainPlacerEditor : Editor
     {
-        terrainPlacer TP = (terrainPlacer)target;
-        DrawDefaultInspector();
 
-        if (GUILayout.Button("Place"))
+        public override void OnInspectorGUI()
         {
-            TP.PlaceObject();
+            terrainPlacer TP = (terrainPlacer)target;
+            DrawDefaultInspector();
+
+            if (GUILayout.Button("Place"))
+            {
+                TP.PlaceObject();
+            }
         }
     }
 }

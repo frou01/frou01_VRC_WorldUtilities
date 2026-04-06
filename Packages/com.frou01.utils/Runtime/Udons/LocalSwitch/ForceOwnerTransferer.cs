@@ -1,43 +1,45 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
-public class ForceOwnerTransferer : UdonSharpBehaviour
+namespace frou01.util
 {
-    [SerializeField]GameObject targetObject;
-    [SerializeField] GameObject[] targetObjects;
-    void Start()
+    public class ForceOwnerTransferer : UdonSharpBehaviour
     {
-        
-    }
+        [SerializeField] GameObject targetObject;
+        [SerializeField] GameObject[] targetObjects;
+        void Start()
+        {
 
-    public override void Interact()
-    {
-        if(targetObject != null) Networking.SetOwner(Networking.LocalPlayer, targetObject);
-        foreach(GameObject go in targetObjects)
-        {
-            Networking.SetOwner(Networking.LocalPlayer, go);
         }
-    }
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-    void OnDrawGizmos()
-    {
-    }
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-        if (targetObjects != null)
+
+        public override void Interact()
         {
-            for (int index = 0; index < targetObjects.Length; index++)
+            if (targetObject != null) Networking.SetOwner(Networking.LocalPlayer, targetObject);
+            foreach (GameObject go in targetObjects)
             {
-                Gizmos.DrawLine(transform.position, targetObjects[index].transform.position);
+                Networking.SetOwner(Networking.LocalPlayer, go);
             }
         }
-        if (targetObject != null)
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        void OnDrawGizmos()
         {
-            Gizmos.DrawLine(transform.position, targetObject.transform.position);
         }
-    }
+        void OnDrawGizmosSelected()
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+            if (targetObjects != null)
+            {
+                for (int index = 0; index < targetObjects.Length; index++)
+                {
+                    Gizmos.DrawLine(transform.position, targetObjects[index].transform.position);
+                }
+            }
+            if (targetObject != null)
+            {
+                Gizmos.DrawLine(transform.position, targetObject.transform.position);
+            }
+        }
 #endif
+    }
 }
