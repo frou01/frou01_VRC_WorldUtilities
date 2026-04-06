@@ -36,9 +36,10 @@ public class InteractActivator_HandSetter : IProcessSceneWithReport
 
         foreach (ColliderUdonCuller CUC in colliderUdonCullers)
         {
-            foreach(GameObject targetOBJ in CUC.targetGameObject)
+            targetUdons.AddRange(CUC.targetUdons);
+            foreach (GameObject targetOBJ in CUC.targetGameObject)
             {
-                if(targetOBJ == null)
+                if (targetOBJ == null)
                 {
                     Debug.LogError("Null element on " + (GetPath(CUC.transform)));
                     continue;
