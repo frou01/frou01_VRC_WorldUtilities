@@ -1,7 +1,6 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
 using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
@@ -23,6 +22,7 @@ public class PickUpEventLinker : UdonSharpBehaviour
             aTarget.SendCustomEvent("OnDrop_");
         }
     }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
     void OnDrawGizmos()
     {
     }
@@ -39,4 +39,5 @@ public class PickUpEventLinker : UdonSharpBehaviour
             }
         }
     }
+#endif
 }

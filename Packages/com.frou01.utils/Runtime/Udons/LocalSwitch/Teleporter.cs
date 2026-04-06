@@ -2,7 +2,6 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
-using VRC.Udon;
 
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Teleporter : UdonSharpBehaviour
@@ -14,4 +13,19 @@ public class Teleporter : UdonSharpBehaviour
     {
         Networking.LocalPlayer.TeleportTo(target.position + Offset, target.rotation);
     }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        if (target != null)
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+            Gizmos.DrawLine(transform.position, target.transform.position + Offset);
+        }
+    }
+#endif
 }

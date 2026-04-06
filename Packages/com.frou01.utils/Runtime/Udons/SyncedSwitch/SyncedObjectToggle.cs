@@ -121,6 +121,7 @@ public class SyncedObjectToggle : UdonSharpBehaviour
         CheckInitAndApply();
     }
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
     public void OnDrawGizmosSelected()
     {
         bool gizmo_transformToggleMode = true;
@@ -147,4 +148,5 @@ public class SyncedObjectToggle : UdonSharpBehaviour
             }
         }
     }
+#endif
 }

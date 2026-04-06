@@ -2,7 +2,6 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
-using VRC.Udon;
 
 public class ForceOwnerTransferer : UdonSharpBehaviour
 {
@@ -21,4 +20,24 @@ public class ForceOwnerTransferer : UdonSharpBehaviour
             Networking.SetOwner(Networking.LocalPlayer, go);
         }
     }
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+    }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        if (targetObjects != null)
+        {
+            for (int index = 0; index < targetObjects.Length; index++)
+            {
+                Gizmos.DrawLine(transform.position, targetObjects[index].transform.position);
+            }
+        }
+        if (targetObject != null)
+        {
+            Gizmos.DrawLine(transform.position, targetObject.transform.position);
+        }
+    }
+#endif
 }

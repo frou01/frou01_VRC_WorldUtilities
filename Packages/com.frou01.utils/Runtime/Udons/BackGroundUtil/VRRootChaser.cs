@@ -1,8 +1,6 @@
 ﻿
 using UdonSharp;
-using UnityEngine;
 using VRC.SDKBase;
-using VRC.Udon;
 using static VRC.SDKBase.VRCPlayerApi;
 
 public class VRRootChaser : UdonSharpBehaviour

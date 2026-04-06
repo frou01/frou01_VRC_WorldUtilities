@@ -9,8 +9,12 @@ public class InteractActivator : UdonSharpBehaviour
     public Transform Head;
     public Transform handL;
     public Transform handR;
-
+    [Header("Interaction overrider.")]
+    [Header("If Hand enter nearby, this udon activate Interaction.")]
+    [Header("No assigned target, this udon control interaction flag of self GameObject")]
+    [Header("Only assign collider, this udon control collider enable/disable state")]
     [SerializeField] Collider[] colliders;
+    [Header("Assigned below, this udon control interaction flag")]
     [SerializeField] public VRC_Pickup[] pickups;
     [SerializeField] public UdonBehaviour[] udons;
     [SerializeField] float proximity;
@@ -109,6 +113,7 @@ public class InteractActivator : UdonSharpBehaviour
     }
 
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
@@ -162,4 +167,5 @@ public class InteractActivator : UdonSharpBehaviour
             }
         }
     }
+#endif
 }
