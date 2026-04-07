@@ -66,6 +66,5 @@ namespace frou01.util
             target.NetworkIDCollection = CheckedList;
         }
     }
-}
-
 #endif
+}
