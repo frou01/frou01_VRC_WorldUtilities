@@ -19,7 +19,7 @@ namespace frou01.util
             {
                 foreach (GameObject go in objects)
                 {
-                    go.SetActive(true);
+                    if(go != null) go.SetActive(true);
                 }
             }
         }
@@ -29,7 +29,7 @@ namespace frou01.util
             {
                 foreach (GameObject go in objects)
                 {
-                    go.SetActive(false);
+                    if (go != null) go.SetActive(false);
                 }
             }
         }
