@@ -68,7 +68,8 @@ namespace frou01.util.editor
                     }
                 }
             }
-            List<GameObject> existMeshes = new List<GameObject>();
+            List<GameObject> existMeshes_Near = new List<GameObject>();
+            List<GameObject> existMeshes_Dist = new List<GameObject>();
             foreach (ColliderBaseLOD currentCBL in targetCBL)
             {
                 if (currentCBL != null)
@@ -80,11 +81,14 @@ namespace frou01.util.editor
                             Debug.LogError("ColliderLOD Near array has missing : " + GetPath(currentCBL.transform));
                             continue;
                         }
-                        existMeshes.Add(go);
+                        existMeshes_Near.Add(go);
                         go.SetActive(false);
+                        foreach(Hierarchy_Optimizer ho in go.GetComponentsInChildren<Hierarchy_Optimizer>(true))
+                        {
+                            ho.forceProceed = true;
+                        }
                     }
-                    currentCBL.NearObjects = existMeshes.ToArray();
-                    existMeshes.Clear();
+                    currentCBL.NearObjects = existMeshes_Near.ToArray();
                     foreach (GameObject go in currentCBL.DistObjects)
                     {
                         if (go == null)
@@ -92,11 +96,30 @@ namespace frou01.util.editor
                             Debug.LogError("ColliderLOD Dist array has missing : " + GetPath(currentCBL.transform));
                             continue;
                         }
-                        existMeshes.Add(go);
-                        go.SetActive(false);
+                        existMeshes_Dist.Add(go);
+                        go.SetActive(true);
+                        foreach (Hierarchy_Optimizer ho in go.GetComponentsInChildren<Hierarchy_Optimizer>(true))
+                        {
+                            ho.forceProceed = true;
+                        }
                     }
-                    currentCBL.DistObjects = existMeshes.ToArray();
-                    existMeshes.Clear();
+                    currentCBL.DistObjects = existMeshes_Dist.ToArray();
+                    foreach (GameObject go_Near in existMeshes_Near)
+                    {
+                        foreach (GameObject go_Dist in existMeshes_Dist)
+                        {
+                            if (go_Near.transform.IsChildOf(go_Dist.transform))
+                            {
+                                go_Near.transform.parent = go_Dist.transform.parent;
+                            }
+                            if (go_Dist.transform.IsChildOf(go_Near.transform))
+                            {
+                                go_Dist.transform.parent = go_Near.transform.parent;
+                            }
+                        }
+                    }
+                    existMeshes_Near.Clear();
+                    existMeshes_Dist.Clear();
                 }
             }
             foreach (ColliderOcclusionPortal obj in targetCOP)
