@@ -157,18 +157,13 @@ namespace frou01.util.editor
 
         void Proceed(Transform parent)
         {
-            if (parent.gameObject.GetComponent<PlayerChaser>() != null)
+            if (parent.gameObject.GetComponentInChildren<PlayerChaser>() != null)
             {
-                playerChaser = parent.gameObject.GetComponent<PlayerChaser>();
+                playerChaser = parent.gameObject.GetComponentInChildren<PlayerChaser>();
             }
-            if (parent.gameObject.GetComponent<InteractActivator>() != null)
-            {
-                interactAvtivators.Add(parent.gameObject.GetComponent<InteractActivator>());
-            }
-            if (parent.gameObject.GetComponent<ColliderUdonCuller>() != null)
-            {
-                colliderUdonCullers.Add(parent.gameObject.GetComponent<ColliderUdonCuller>());
-            }
+            interactAvtivators.AddRange(parent.gameObject.GetComponentsInChildren<InteractActivator>(true));
+
+            colliderUdonCullers.AddRange(parent.gameObject.GetComponentsInChildren<ColliderUdonCuller>(true));
             foreach (Transform obj in parent)
             {
                 Proceed(obj);

@@ -33,14 +33,7 @@ namespace frou01.util.editor
 
         void Proceed(Transform parent)
         {
-            if (parent.gameObject.GetComponent<Hierarchy_Optimizer>() != null)
-            {
-                target.Add(parent.gameObject.GetComponent<Hierarchy_Optimizer>());
-            }
-            foreach (Transform obj in parent)
-            {
-                Proceed(obj);
-            }
+            target.AddRange(parent.gameObject.GetComponentsInChildren<Hierarchy_Optimizer>(true));
         }
 
         public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
