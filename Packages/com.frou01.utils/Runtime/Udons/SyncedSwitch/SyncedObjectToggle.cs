@@ -6,7 +6,6 @@ using VRC.Udon;
 
 namespace frou01.util
 {
-    [RequireComponent(typeof(Collider))]
     public class SyncedObjectToggle : UdonSharpBehaviour
     {
         [Tooltip("Object changes will be applied. If there is no toggle transform, this udon toggle active-state of GameObject.")]
@@ -126,6 +125,7 @@ namespace frou01.util
         public void OnDrawGizmosSelected()
         {
             bool gizmo_transformToggleMode = true;
+            if (targets == null) return;
             if (targets.Length != target_ToggleTrueTransform.Length || target_ToggleFalseTransform.Length != target_ToggleTrueTransform.Length)
             {
                 gizmo_transformToggleMode = false;
