@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -7,82 +8,154 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport , IVRCSDKBuildRequestedCallback
+namespace frou01.util.editor
 {
-    public int callbackOrder => 0;
-
-
-    public List<ColliderGameObjectCuller> target = new List<ColliderGameObjectCuller>();
-    public List<ColliderOcclusionPortal> target2 = new List<ColliderOcclusionPortal>();
-
-
-    public void OnProcessScene(Scene scene, BuildReport report)
+    public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
     {
-        foreach (GameObject obj in scene.GetRootGameObjects())
+        public int callbackOrder => 0;  
+
+
+        public List<ColliderGameObjectCuller> targetCGC = new List<ColliderGameObjectCuller>();
+        public List<ColliderOcclusionPortal> targetCOP = new List<ColliderOcclusionPortal>();
+        public List<ColliderBaseLOD> targetCBL = new List<ColliderBaseLOD>();
+
+
+        public void OnProcessScene(Scene scene, BuildReport report)
         {
-            Proceed(obj.transform);
-        }
-        foreach (ColliderGameObjectCuller obj in target)
-        {
-            if (obj != null)
+            targetCGC = new List<ColliderGameObjectCuller>();
+            targetCOP = new List<ColliderOcclusionPortal>();
+            targetCBL = new List<ColliderBaseLOD>();
+            foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                if (obj.gameObject.activeInHierarchy)
+                Proceed(obj.transform);
+            }
+            string pattern = @"^(?=.*instanced).*$";
+            foreach (ColliderGameObjectCuller currentCGC in targetCGC)
+            {
+                if (currentCGC != null)
                 {
-                    Debug.Log("SetUp" + obj.name);
-                    foreach (GameObject go in obj.objects)
+                    if (currentCGC.gameObject.activeInHierarchy)
+                    {
+                        //Debug.Log("SetUp " + currentCGC.name);
+                        foreach (GameObject go in currentCGC.objects)
+                        {
+                            if (go == null)
+                            {
+                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
+                            }
+                            else
+                            {
+                                go.SetActive(false);
+                            }
+                        }
+                    }
+                    if (currentCGC.isStaticMode)
+                    {
+                        List<GameObject> staticmeshes = new List<GameObject>();
+                        foreach (GameObject go in currentCGC.objects)
+                        {
+                            if (go == null)
+                            {
+                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
+                            }
+                            else
+                            {
+                                bool isinstanced = Regex.IsMatch(go.name, pattern);
+                                if(!isinstanced)
+                                {
+                                    staticmeshes.Add(go);
+                                }
+                            }
+                        }
+                        StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
+                    }
+                }
+            }
+            List<GameObject> existMeshes_Near = new List<GameObject>();
+            List<GameObject> existMeshes_Dist = new List<GameObject>();
+            foreach (ColliderBaseLOD currentCBL in targetCBL)
+            {
+                if (currentCBL != null)
+                {
+                    foreach (GameObject go in currentCBL.NearObjects)
                     {
                         if (go == null)
                         {
-                            Debug.LogError("Culler array has missing : " + GetPath(obj.transform));
+                            Debug.Log("ColliderLOD Near array has missing : " + GetPath(currentCBL.transform), currentCBL);
+                            continue;
                         }
-                        else
+                        existMeshes_Near.Add(go);
+                        go.SetActive(false);
+                        foreach(Hierarchy_Optimizer ho in go.GetComponentsInChildren<Hierarchy_Optimizer>(true))
                         {
-                            go.SetActive(false);
+                            ho.forceProceed = true;
                         }
                     }
+                    currentCBL.NearObjects = existMeshes_Near.ToArray();
+                    foreach (GameObject go in currentCBL.DistObjects)
+                    {
+                        if (go == null)
+                        {
+                            Debug.Log("ColliderLOD Dist array has missing : " + GetPath(currentCBL.transform), currentCBL);
+                            continue;
+                        }
+                        existMeshes_Dist.Add(go);
+                        go.SetActive(true);
+                        foreach (Hierarchy_Optimizer ho in go.GetComponentsInChildren<Hierarchy_Optimizer>(true))
+                        {
+                            ho.forceProceed = true;
+                        }
+                    }
+                    currentCBL.DistObjects = existMeshes_Dist.ToArray();
+                    foreach (GameObject go_Near in existMeshes_Near)
+                    {
+                        foreach (GameObject go_Dist in existMeshes_Dist)
+                        {
+                            if (go_Near.transform.IsChildOf(go_Dist.transform))
+                            {
+                                go_Near.transform.parent = go_Dist.transform.parent;
+                            }
+                            if (go_Dist.transform.IsChildOf(go_Near.transform))
+                            {
+                                go_Dist.transform.parent = go_Near.transform.parent;
+                            }
+                        }
+                    }
+                    existMeshes_Near.Clear();
+                    existMeshes_Dist.Clear();
                 }
-                if(obj.isStaticMode) StaticBatchingUtility.Combine(obj.objects,null);
             }
-        }
-        foreach (ColliderOcclusionPortal obj in target2)
-        {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            foreach (ColliderOcclusionPortal obj in targetCOP)
             {
-                Debug.Log("SetUp" + obj.name);
-                obj.GetComponent<OcclusionPortal>().open = false;
+                if (obj != null && obj.gameObject.activeInHierarchy)
+                {
+                    //Debug.Log("SetUp" + obj.name);
+                    obj.GetComponent<OcclusionPortal>().open = false;
+                }
             }
         }
-    }
 
-    private string GetPath(Transform t)
-    {
-        string path = t.name;
-        while (t.parent)
+        private string GetPath(Transform t)
         {
-            path = t.parent.name + path;
-            t = t.parent;
+            string path = t.name;
+            while (t.parent)
+            {
+                path = t.parent.name + " , " + path;
+                t = t.parent;
+            }
+            return path;
         }
-        return path;
-    }
 
-    void Proceed(Transform parent)
-    {
-        if (parent.gameObject.GetComponent<ColliderGameObjectCuller>() != null)
+        void Proceed(Transform parent)
         {
-            target.Add(parent.gameObject.GetComponent<ColliderGameObjectCuller>());
+            targetCGC.AddRange(parent.gameObject.GetComponentsInChildren<ColliderGameObjectCuller>(true));
+            targetCOP.AddRange(parent.gameObject.GetComponentsInChildren<ColliderOcclusionPortal>(true));
+            targetCBL.AddRange(parent.gameObject.GetComponentsInChildren<ColliderBaseLOD>(true));
         }
-        if (parent.gameObject.GetComponent<ColliderOcclusionPortal>() != null)
-        {
-            target2.Add(parent.gameObject.GetComponent<ColliderOcclusionPortal>());
-        }
-        foreach (Transform obj in parent)
-        {
-            Proceed(obj);
-        }
-    }
 
-    public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
-    {
-        return true;
+        public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
+        {
+            return true;
+        }
     }
 }

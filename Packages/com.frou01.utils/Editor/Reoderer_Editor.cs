@@ -4,56 +4,59 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Reorderer), false), CanEditMultipleObjects]
-public class railModelTiler_Editor : Editor
+namespace frou01.util.editor
 {
-    // Start is called before the first frame update
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(Reorderer), false), CanEditMultipleObjects]
+    public class Reorderer_Editor : Editor
     {
-        Reorderer reorderer = (Reorderer)target;
-        if (reorderer == null) return;
-        DrawDefaultInspector();
-        if (GUILayout.Button("Perform"))
+        // Start is called before the first frame update
+        public override void OnInspectorGUI()
         {
-            ArrayList sorting = new ArrayList();
-            ArrayList sorted = new ArrayList();
-            foreach (Reorderer n in targets.OfType<Reorderer>())
+            Reorderer reorderer = (Reorderer)target;
+            if (reorderer == null) return;
+            DrawDefaultInspector();
+            if (GUILayout.Button("Perform"))
             {
-                sorting.Add(n);
-            }
-            int selectedNum = 0;
-            int currentSiblingIndex = 0;
-            while (sorting.Count > 0)
-            {
-                selectedNum++;
-                if (selectedNum > 1000) return;
-                Reorderer target = null;
-                foreach (Reorderer n in sorting)
+                ArrayList sorting = new ArrayList();
+                ArrayList sorted = new ArrayList();
+                foreach (Reorderer n in targets.OfType<Reorderer>())
                 {
-                    if (n.index <= currentSiblingIndex) target = n;
+                    sorting.Add(n);
                 }
-                if (target == null)
+                int selectedNum = 0;
+                int currentSiblingIndex = 0;
+                while (sorting.Count > 0)
                 {
-                    currentSiblingIndex += 1;
-                    continue;
+                    selectedNum++;
+                    if (selectedNum > 1000) return;
+                    Reorderer target = null;
+                    foreach (Reorderer n in sorting)
+                    {
+                        if (n.index <= currentSiblingIndex) target = n;
+                    }
+                    if (target == null)
+                    {
+                        currentSiblingIndex += 1;
+                        continue;
+                    }
+                    Debug.Log(currentSiblingIndex);
+                    sorted.Add(target);
+                    sorting.Remove(target);
                 }
-                Debug.Log(currentSiblingIndex);
-                sorted.Add(target);
-                sorting.Remove(target);
-            }
 
-            foreach (Reorderer n in sorted)
-            {
-                Debug.Log(n.index);
-                n.transform.parent.GetChild(n.index).SetSiblingIndex(n.transform.GetSiblingIndex());
-                n.transform.SetSiblingIndex(n.index);
+                foreach (Reorderer n in sorted)
+                {
+                    Debug.Log(n.index);
+                    n.transform.parent.GetChild(n.index).SetSiblingIndex(n.transform.GetSiblingIndex());
+                    n.transform.SetSiblingIndex(n.index);
+                }
             }
-        }
-        if (GUILayout.Button("Get"))
-        {
-            foreach (Reorderer n in targets.OfType<Reorderer>())
+            if (GUILayout.Button("Get"))
             {
-                n.index = n.transform.GetSiblingIndex();
+                foreach (Reorderer n in targets.OfType<Reorderer>())
+                {
+                    n.index = n.transform.GetSiblingIndex();
+                }
             }
         }
     }

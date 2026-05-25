@@ -6,18 +6,21 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(terrainDigger))]
-public class terrainDiggerEditor : Editor
+namespace frou01.util.editor
 {
-
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(terrainDigger))]
+    public class terrainDiggerEditor : Editor
     {
-        terrainDigger TD = (terrainDigger)target;
-        DrawDefaultInspector();
 
-        if (GUILayout.Button("Digging!"))
+        public override void OnInspectorGUI()
         {
-            TD.DigTerrain();
+            terrainDigger TD = (terrainDigger)target;
+            DrawDefaultInspector();
+
+            if (GUILayout.Button("Digging!"))
+            {
+                TD.DigTerrain();
+            }
         }
     }
 }

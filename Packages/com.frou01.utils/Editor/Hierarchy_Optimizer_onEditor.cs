@@ -1,49 +1,44 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-public class Hierarchy_Optimizer_onEditor : IProcessSceneWithReport , IVRCSDKBuildRequestedCallback
+namespace frou01.util.editor
 {
-    public int callbackOrder => 5;
-
-    public List<Hierarchy_Optimizer> target = new List<Hierarchy_Optimizer>();
-
-
-    public void OnProcessScene(Scene scene, BuildReport report)
+    public class Hierarchy_Optimizer_onEditor : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
     {
-        foreach (GameObject obj in scene.GetRootGameObjects())
+        public int callbackOrder => 5;
+
+        public List<Hierarchy_Optimizer> target = new List<Hierarchy_Optimizer>();
+
+
+        public void OnProcessScene(Scene scene, BuildReport report)
         {
-        //    //Debug.Log("OK!");
-            Proceed(obj.transform);
-        }
-        foreach (Hierarchy_Optimizer obj in target)
-        {
-            if(obj != null && (obj.gameObject.activeInHierarchy || obj.forceProceed))
+            foreach (GameObject obj in scene.GetRootGameObjects())
             {
-        //        Debug.Log("MoveToRoot" + obj.name);
-                obj.transform.parent = obj.target;
+                //    //Debug.Log("OK!");
+                Proceed(obj.transform);
+            }
+            foreach (Hierarchy_Optimizer obj in target)
+            {
+                if (obj != null && (obj.gameObject.activeInHierarchy || obj.forceProceed))
+                {
+                    //        Debug.Log("MoveToRoot" + obj.name);
+                    obj.transform.parent = obj.target;
+                }
             }
         }
-    }
 
-    void Proceed(Transform parent)
-    {
-        if (parent.gameObject.GetComponent<Hierarchy_Optimizer>() != null)
+        void Proceed(Transform parent)
         {
-            target.Add(parent.gameObject.GetComponent<Hierarchy_Optimizer>());
+            target.AddRange(parent.gameObject.GetComponentsInChildren<Hierarchy_Optimizer>(true));
         }
-        foreach (Transform obj in parent)
-        {
-            Proceed(obj);
-        }
-    }
 
-    public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
-    {
-        return true;
+        public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
+        {
+            return true;
+        }
     }
 }

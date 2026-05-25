@@ -1,61 +1,63 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDKBase.Editor.BuildPipeline;
 
-public class DynamicBatching_onEditor : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
+namespace frou01.util.editor
 {
-    public int callbackOrder => 1;
-
-    public List<Transform> target = new List<Transform>();
-
-
-    public void OnProcessScene(Scene scene, BuildReport report)
+    public class DynamicBatching_onEditor : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
     {
-        foreach (GameObject obj in scene.GetRootGameObjects())
+        public int callbackOrder => 1;
+
+        public List<Transform> target = new List<Transform>();
+
+
+        public void OnProcessScene(Scene scene, BuildReport report)
         {
-            Proceed(obj.transform);
-        }
-        foreach (Transform obj in target)
-        {
-            if (obj != null)
+            foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                GameObject[] gos = obj.GetComponent<DynamicBatching>().batchingObjects;
-                Debug.Log("Bathcing!" + GetHierarchyPath(obj.gameObject));
-                StaticBatchingUtility.Combine(gos, obj.gameObject);
+                Proceed(obj.transform);
+            }
+            foreach (Transform obj in target)
+            {
+                if (obj != null)
+                {
+                    GameObject[] gos = obj.GetComponent<DynamicBatching>().batchingObjects;
+                    Debug.Log("Bathcing!" + GetHierarchyPath(obj.gameObject));
+                    StaticBatchingUtility.Combine(gos, obj.gameObject);
+                }
             }
         }
-    }
 
-    void Proceed(Transform parent)
-    {
-        if (parent.gameObject.GetComponent<DynamicBatching>() != null)
+        void Proceed(Transform parent)
         {
-            target.Add(parent);
+            if (parent.gameObject.GetComponent<DynamicBatching>() != null)
+            {
+                target.Add(parent);
+            }
+            foreach (Transform obj in parent)
+            {
+                Proceed(obj);
+            }
         }
-        foreach (Transform obj in parent)
+        private static string GetHierarchyPath(GameObject targetObj)
         {
-            Proceed(obj);
+            List<GameObject> objPath = new List<GameObject>();
+            objPath.Add(targetObj);
+            for (int i = 0; objPath[i].transform.parent != null; i++)
+                objPath.Add(objPath[i].transform.parent.gameObject);
+            string path = objPath[objPath.Count - 1].gameObject.name;
+            for (int i = objPath.Count - 2; i >= 0; i--)
+                path += "/" + objPath[i].gameObject.name;
+
+            return path;
         }
-    }
-    private static string GetHierarchyPath(GameObject targetObj)
-    {
-        List<GameObject> objPath = new List<GameObject>();
-        objPath.Add(targetObj);
-        for (int i = 0; objPath[i].transform.parent != null; i++)
-            objPath.Add(objPath[i].transform.parent.gameObject);
-        string path = objPath[objPath.Count - 1].gameObject.name;
-        for (int i = objPath.Count - 2; i >= 0; i--)
-            path += "/" + objPath[i].gameObject.name;
 
-        return path;
-    }
-
-    public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
-    {
-        return true;
+        public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
+        {
+            return true;
+        }
     }
 }
