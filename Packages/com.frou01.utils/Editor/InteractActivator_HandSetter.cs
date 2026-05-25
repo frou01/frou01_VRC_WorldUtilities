@@ -43,7 +43,7 @@ namespace frou01.util.editor
                 {
                     if (targetOBJ == null)
                     {
-                        Debug.LogError("Null element on " + GetPath(CUC.transform));
+                        Debug.LogError("Null element on " + GetPath(CUC.transform), CUC);
                         continue;
                     }
                     UdonBehaviour[] udonBehaviours = targetOBJ.GetComponents<UdonBehaviour>();

@@ -22,6 +22,9 @@ namespace frou01.util.editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            targetCGC = new List<ColliderGameObjectCuller>();
+            targetCOP = new List<ColliderOcclusionPortal>();
+            targetCBL = new List<ColliderBaseLOD>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
                 Proceed(obj.transform);
@@ -33,12 +36,12 @@ namespace frou01.util.editor
                 {
                     if (currentCGC.gameObject.activeInHierarchy)
                     {
-                        Debug.Log("SetUp" + currentCGC.name);
+                        //Debug.Log("SetUp " + currentCGC.name);
                         foreach (GameObject go in currentCGC.objects)
                         {
                             if (go == null)
                             {
-                                Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform));
+                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
                             }
                             else
                             {
@@ -53,7 +56,7 @@ namespace frou01.util.editor
                         {
                             if (go == null)
                             {
-                                Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform));
+                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
                             }
                             else
                             {
@@ -78,7 +81,7 @@ namespace frou01.util.editor
                     {
                         if (go == null)
                         {
-                            Debug.LogError("ColliderLOD Near array has missing : " + GetPath(currentCBL.transform));
+                            Debug.Log("ColliderLOD Near array has missing : " + GetPath(currentCBL.transform), currentCBL);
                             continue;
                         }
                         existMeshes_Near.Add(go);
@@ -93,7 +96,7 @@ namespace frou01.util.editor
                     {
                         if (go == null)
                         {
-                            Debug.LogError("ColliderLOD Dist array has missing : " + GetPath(currentCBL.transform));
+                            Debug.Log("ColliderLOD Dist array has missing : " + GetPath(currentCBL.transform), currentCBL);
                             continue;
                         }
                         existMeshes_Dist.Add(go);
@@ -126,7 +129,7 @@ namespace frou01.util.editor
             {
                 if (obj != null && obj.gameObject.activeInHierarchy)
                 {
-                    Debug.Log("SetUp" + obj.name);
+                    //Debug.Log("SetUp" + obj.name);
                     obj.GetComponent<OcclusionPortal>().open = false;
                 }
             }
@@ -137,7 +140,7 @@ namespace frou01.util.editor
             string path = t.name;
             while (t.parent)
             {
-                path = t.parent.name + path;
+                path = t.parent.name + " , " + path;
                 t = t.parent;
             }
             return path;
