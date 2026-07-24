@@ -15,7 +15,6 @@ namespace frou01.util.editor
             Revert_SerializedUdonProgramSource Target = (Revert_SerializedUdonProgramSource)target;
             if (GUILayout.Button("Revert"))
             {
-                Debug.Log("Revert", Target);
                 Target.Revert();
             }
         }
