@@ -19,7 +19,7 @@ namespace frou01.util
         }
 
 
-        string path = "serializedProgramAsset";
+        static string path = "serializedProgramAsset";
         public void Revert()
         {
             GameObject[] rootObjects =
@@ -31,12 +31,11 @@ namespace frou01.util
             }
         }
 
-        void Proceed(Transform parent)
+        public static void Proceed(Transform parent)
         {
             if (parent.gameObject.GetComponent<UdonBehaviour>() != null)
                 if (PrefabUtility.IsPartOfPrefabInstance(parent.gameObject))
                 {
-
                     foreach (UdonBehaviour anUdon in parent.gameObject.GetComponents<UdonBehaviour>())
                     {
                         if (PrefabUtility.IsPartOfPrefabInstance(anUdon))
