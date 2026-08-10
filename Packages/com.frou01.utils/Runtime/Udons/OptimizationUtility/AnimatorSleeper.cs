@@ -9,9 +9,10 @@ namespace frou01.util
     {
         int isActiveHash;
 
-        int delayer;
+        float delayer;
 
         [SerializeField] Animator animator;
+        [SerializeField] float waitTime = 2;
 
         void Start()
         {
@@ -23,12 +24,12 @@ namespace frou01.util
             if (animator.GetFloat(isActiveHash) == 0 && animator.enabled)
             {
                 //Debug.Log("debug_disabling");
-                if (delayer > 10)
+                if (delayer > waitTime)
                 {
                     animator.enabled = false;
                     delayer = 0;
                 }
-                delayer++;
+                delayer+= Time.deltaTime;
             }
             else
             {
