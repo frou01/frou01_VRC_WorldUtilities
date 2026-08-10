@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,6 +5,7 @@ namespace frou01.util
 {
     public class GizmoExtension : MonoBehaviour
     {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
         public static Vector3 getCenter(Transform transform)
         {
             MeshRenderer[] meshRenderers = transform.GetComponentsInChildren<MeshRenderer>();
@@ -37,5 +36,6 @@ namespace frou01.util
             Gizmos.DrawLine(end - dir * length * size_len + wide * length * size_wide, end);
             Gizmos.DrawLine(end - dir * length * size_len - wide * length * size_wide, end);
         }
+#endif
     }
 }
