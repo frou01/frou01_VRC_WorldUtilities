@@ -27,15 +27,19 @@ namespace frou01.util
                 if (delayer > waitTime)
                 {
                     animator.enabled = false;
-                    delayer = 0;
+                    ResetCount();
                 }
                 delayer+= Time.deltaTime;
             }
             else
             {
-                delayer = 0;
+                ResetCount();
             }
             enabled = false;
+        }
+        public void ResetCount()
+        {
+            delayer = 0;
         }
     }
 }
