@@ -7,11 +7,11 @@ using VRC.SDKBase.Editor.BuildPipeline;
 
 namespace frou01.util.editor
 {
-    public class GPUInstancer_BuildProcess : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
+    public class Hierarchy_Optimizer_onEditor : IProcessSceneWithReport
     {
         public int callbackOrder => 5;
 
-        public List<GPUInstancer> target = new List<GPUInstancer>();
+        public List<Hierarchy_Optimizer> target = new List<Hierarchy_Optimizer>();
 
 
         public void OnProcessScene(Scene scene, BuildReport report)
@@ -19,19 +19,17 @@ namespace frou01.util.editor
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
                 //    //Debug.Log("OK!");
-                Proceed(obj.transform);
+                target.AddRange(obj.GetComponentsInChildren<Hierarchy_Optimizer>(true));
             }
-            foreach (GPUInstancer obj in target)
+            foreach (Hierarchy_Optimizer obj in target)
             {
-                obj.ProceedInstancing();
+                if (obj != null && (obj.gameObject.activeInHierarchy || obj.forceProceed))
+                {
+                    //        Debug.Log("MoveToRoot" + obj.name);
+                    obj.transform.parent = obj.target;
+                }
             }
         }
-
-        void Proceed(Transform parent)
-        {
-            target.AddRange(parent.gameObject.GetComponentsInChildren<GPUInstancer>(true));
-        }
-
         public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
         {
             return true;

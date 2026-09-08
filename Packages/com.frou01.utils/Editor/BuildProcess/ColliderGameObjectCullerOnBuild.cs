@@ -14,7 +14,7 @@ using static VRC.SDKBase.Networking;
 
 namespace frou01.util.editor
 {
-    public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport, IVRCSDKBuildRequestedCallback
+    public class ColliderGameObjectCullerOnBuild : IProcessSceneWithReport
     {
         public int callbackOrder => 0;  
 
@@ -31,7 +31,9 @@ namespace frou01.util.editor
             targetCBL = new List<ColliderBaseLOD>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                Proceed(obj.transform);
+                targetCGC.AddRange(obj.GetComponentsInChildren<ColliderGameObjectCuller>(true));
+                targetCOP.AddRange(obj.GetComponentsInChildren<ColliderOcclusionPortal>(true));
+                targetCBL.AddRange(obj.GetComponentsInChildren<ColliderBaseLOD>(true));
             }
             string pattern = @"^(?=.*instanced).*$";//部分一致 instanced
             foreach (ColliderGameObjectCuller currentCGC in targetCGC)
@@ -145,9 +147,6 @@ namespace frou01.util.editor
 
         void Proceed(Transform parent)
         {
-            targetCGC.AddRange(parent.gameObject.GetComponentsInChildren<ColliderGameObjectCuller>(true));
-            targetCOP.AddRange(parent.gameObject.GetComponentsInChildren<ColliderOcclusionPortal>(true));
-            targetCBL.AddRange(parent.gameObject.GetComponentsInChildren<ColliderBaseLOD>(true));
         }
 
         public bool OnBuildRequested(VRCSDKRequestedBuildType requestedBuildType)
