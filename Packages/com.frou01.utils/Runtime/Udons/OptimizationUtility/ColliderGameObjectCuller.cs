@@ -9,6 +9,7 @@ namespace frou01.util
     [RequireComponent(typeof(Collider))]
     public class ColliderGameObjectCuller : UdonSharpBehaviour
     {
+        //TODO UdonBehaviourを通常使わず、EditorScriptで設定を引き継いで代わりのUdonBehaviourを付けるようにする。VRCはこんなもんにまでNetworkIDを振りやがるので。
         [Header("If PlayerChaser enter collider, this udon activate assigned GameObjects.")]
         public GameObject[] objects;
         public bool isStaticMode;
