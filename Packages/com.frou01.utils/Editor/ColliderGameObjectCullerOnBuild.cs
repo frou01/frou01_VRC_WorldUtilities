@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using UdonSharpEditor;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC.SDKBase.Editor.BuildPipeline;
+using VRC.Udon;
+using static VRC.SDKBase.Networking;
 
 namespace frou01.util.editor
 {
@@ -29,46 +33,39 @@ namespace frou01.util.editor
             {
                 Proceed(obj.transform);
             }
-            string pattern = @"^(?=.*instanced).*$";
+            string pattern = @"^(?=.*instanced).*$";//部分一致 instanced
             foreach (ColliderGameObjectCuller currentCGC in targetCGC)
             {
                 if (currentCGC != null)
                 {
-                    if (currentCGC.gameObject.activeInHierarchy)
+                    //Debug.Log("SetUp " + currentCGC.name);
+                    foreach (GameObject go in currentCGC.objects)
                     {
-                        //Debug.Log("SetUp " + currentCGC.name);
-                        foreach (GameObject go in currentCGC.objects)
+                        if (go == null)
                         {
-                            if (go == null)
-                            {
-                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
-                            }
-                            else
-                            {
-                                go.SetActive(false);
-                            }
+                            Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
+                        }
+                        else
+                        {
+                            if (currentCGC.gameObject.activeInHierarchy) go.SetActive(false);
                         }
                     }
+                    currentCGC.objects = currentCGC.objects.Where(val => val != null).ToArray();
                     if (currentCGC.isStaticMode)
                     {
                         List<GameObject> staticmeshes = new List<GameObject>();
                         foreach (GameObject go in currentCGC.objects)
                         {
-                            if (go == null)
+                            bool isinstanced = Regex.IsMatch(go.name, pattern);
+                            if (!isinstanced)
                             {
-                                Debug.Log("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
-                            }
-                            else
-                            {
-                                bool isinstanced = Regex.IsMatch(go.name, pattern);
-                                if(!isinstanced)
-                                {
-                                    staticmeshes.Add(go);
-                                }
+                                staticmeshes.Add(go);
                             }
                         }
                         StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
                     }
+                    ColliderGameObjectCuller_UdonBehaviour CGCUB = currentCGC.gameObject.AddUdonSharpComponentAlignSync<ColliderGameObjectCuller_UdonBehaviour>();
+                    CGCUB.objects = currentCGC.objects;
                 }
             }
             List<GameObject> existMeshes_Near = new List<GameObject>();

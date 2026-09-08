@@ -30,78 +30,33 @@ namespace frou01.util.editor
             colliderUdonCullers = new List<ColliderUdonCuller>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                Proceed(obj.transform);
-            }
-            List<GameObject> targetUdonGameObj = new List<GameObject>();
-            List<UdonBehaviour> targetUdons = new List<UdonBehaviour>();
-            List<VRCPickup> targetPicks = new List<VRCPickup>();
+                if (obj.GetComponentInChildren<PlayerChaser>() != null)
+                {
+                    playerChaser = obj.GetComponentInChildren<PlayerChaser>();
+                }
+                interactAvtivators.AddRange(obj.GetComponentsInChildren<InteractActivator>(true));
 
-            foreach (ColliderUdonCuller CUC in colliderUdonCullers)
-            {
-                targetUdons.AddRange(CUC.targetUdons);
-                foreach (GameObject targetOBJ in CUC.targetGameObject)
-                {
-                    if (targetOBJ == null)
-                    {
-                        Debug.LogError("Null element on " + GetPath(CUC.transform), CUC);
-                        continue;
-                    }
-                    UdonBehaviour[] udonBehaviours = targetOBJ.GetComponents<UdonBehaviour>();
-                    foreach (UdonBehaviour udon in udonBehaviours)
-                    {
-                        bool hasSyncVar = false;
-                        if (udon.SyncMethod != VRC.SDKBase.Networking.SyncType.None)
-                        {
-                            var type = udon.GetType();
-                            FieldInfo memberinfo = type.GetField("serializedProgramAsset",
-                                BindingFlags.NonPublic | BindingFlags.Instance);
-
-                            IUdonProgram _program = ((AbstractSerializedUdonProgramAsset)memberinfo.GetValue(udon)).RetrieveProgram();
-                            if (_program.SyncMetadataTable != null)
-                            {
-                                IEnumerable<IUdonSyncMetadata> SyncMetadatas = _program.SyncMetadataTable.GetAllSyncMetadata();
-                                foreach (IUdonSyncMetadata metas in SyncMetadatas)
-                                {
-                                    hasSyncVar |= true;
-                                }
-                            }
-                            else { Debug.Log("fail get SyncMetadataTable"); }
-                        }
-                        if (!hasSyncVar)
-                        {
-                            udon.enabled = false;
-                            targetUdons.Add(udon);
-                        }
-                    }
-                }
-                if (CUC.GetComponentInParent<Rigidbody>(true))
-                {
-                    if (!CUC.gameObject.GetComponent<Rigidbody>())
-                    {
-                        Rigidbody newrb = CUC.gameObject.AddComponent<Rigidbody>();
-                        newrb.isKinematic = true;
-                        newrb.useGravity = false;
-                        newrb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                    }
-                }
-                else
-                {
-                    foreach (Collider col in CUC.gameObject.GetComponents<Collider>())
-                    {
-                        col.providesContacts = true;
-                    }
-                }
-                CUC.targetUdons = targetUdons.ToArray();
-                CUC.playerChaser = playerChaser.gameObject;
-                targetUdons.Clear();
+                colliderUdonCullers.AddRange(obj.GetComponentsInChildren<ColliderUdonCuller>(true));
             }
 
-            foreach (InteractActivator IA in interactAvtivators)
+            foreach (InteractActivator PlaceHolderIA in interactAvtivators)
             {
+                InteractActivator_UdonBehaviour IA = PlaceHolderIA.gameObject.AddUdonSharpComponentAlignSync<InteractActivator_UdonBehaviour>();
+
+
+                List<GameObject> targetUdonGameObj = new List<GameObject>();
+                List<UdonBehaviour> targetUdons = new List<UdonBehaviour>();
+                List<VRCPickup> targetPicks = new List<VRCPickup>();
                 //Debug.Log(IA);
                 IA.Head = playerChaser.transform;
                 IA.handL = playerChaser.HandL;
                 IA.handR = playerChaser.HandR;
+                IA.colliders = PlaceHolderIA.colliders;
+                IA.pickups = PlaceHolderIA.pickups;
+                IA.udons = PlaceHolderIA.udons;
+                IA.proximity = PlaceHolderIA.proximity;
+                IA.BaseTransforms = PlaceHolderIA.BaseTransforms;
+                IA.currentState = PlaceHolderIA.currentState;
                 targetUdonGameObj.Add(IA.gameObject);
                 foreach (UdonBehaviour udon in IA.udons)
                 {
@@ -148,25 +103,52 @@ namespace frou01.util.editor
                 IA.pickups = targetPicks.ToArray();
                 IA.currentState = true;
                 IA.changeColliderState(false);
-                targetUdonGameObj.Clear();
+            }
+
+            foreach (ColliderUdonCuller CUC in colliderUdonCullers)
+            {
+                List<UdonBehaviour> targetUdons = new List<UdonBehaviour>();
+                targetUdons.AddRange(CUC.targetUdons);
+                foreach (GameObject targetOBJ in CUC.targetGameObject)
+                {
+                    if (targetOBJ == null)
+                    {
+                        Debug.LogError("Null element on " + GetPath(CUC.transform), CUC);
+                        continue;
+                    }
+                    UdonBehaviour[] udonBehaviours = targetOBJ.GetComponents<UdonBehaviour>();
+                    foreach (UdonBehaviour udon in udonBehaviours)
+                    {
+                        if (!udon) { Debug.LogError("Missing found ", CUC); continue; }
+                        bool hasSyncVar = CSharpUdonSharpHelper.HasSyncVariable(udon);
+
+                        if (!hasSyncVar)
+                        {
+                            udon.enabled = false;
+                            targetUdons.Add(udon);
+                        }
+                    }
+                }
+                if (CUC.GetComponentInParent<Rigidbody>(true))
+                {
+                    if (!CUC.gameObject.GetComponent<Rigidbody>())
+                    {
+                        Rigidbody newrb = CUC.gameObject.AddComponent<Rigidbody>();
+                        newrb.isKinematic = true;
+                        newrb.useGravity = false;
+                        newrb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                    }
+                }
+                else
+                {
+                    foreach (Collider col in CUC.gameObject.GetComponents<Collider>())
+                    {
+                        col.providesContacts = true;
+                    }
+                }
+                CUC.targetUdons = targetUdons.ToArray();
+                CUC.playerChaser = playerChaser.gameObject;
                 targetUdons.Clear();
-                targetPicks.Clear();
-            }
-
-        }
-
-        void Proceed(Transform parent)
-        {
-            if (parent.gameObject.GetComponentInChildren<PlayerChaser>() != null)
-            {
-                playerChaser = parent.gameObject.GetComponentInChildren<PlayerChaser>();
-            }
-            interactAvtivators.AddRange(parent.gameObject.GetComponentsInChildren<InteractActivator>(true));
-
-            colliderUdonCullers.AddRange(parent.gameObject.GetComponentsInChildren<ColliderUdonCuller>(true));
-            foreach (Transform obj in parent)
-            {
-                Proceed(obj);
             }
         }
 
