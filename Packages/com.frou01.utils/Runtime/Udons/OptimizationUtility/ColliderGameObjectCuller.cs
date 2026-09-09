@@ -1,6 +1,4 @@
-﻿using UdonSharp;
-using UnityEngine;
-using VRC.SDKBase;
+﻿using UnityEngine;
 using VRC.Udon;
 
 namespace frou01.util
@@ -13,5 +11,13 @@ namespace frou01.util
         public GameObject[] objects;
         [Header("MoveableStatic Batching. \nIf object.name include \"instanced\", ignored.")]
         public bool isStaticMode;
+        void OnTriggerEnter(Collider other)
+        {
+            this.GetComponent<ColliderGameObjectCuller_UdonBehaviour>().OnTriggerEnter(other);
+        }
+        void OnTriggerExit(Collider other)
+        {
+            this.GetComponent<ColliderGameObjectCuller_UdonBehaviour>().OnTriggerExit(other);
+        }
     }
 }

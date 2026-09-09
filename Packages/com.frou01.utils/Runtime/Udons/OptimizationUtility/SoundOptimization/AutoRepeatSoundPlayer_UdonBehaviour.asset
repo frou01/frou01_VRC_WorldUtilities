@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: AutoRepeatSoundPlayer
+  m_Name: AutoRepeatSoundPlayer_UdonBehaviour
   m_EditorClassIdentifier: 
   serializedUdonProgramAsset: {fileID: 0}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: 40502b4c1ff34b94cb5a475a13421fa5, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 3f0d894ad2b7d2c4a93089d97da2f34f, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 7023934156663700331
+  scriptID: -6795190167240623392
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

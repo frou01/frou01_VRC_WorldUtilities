@@ -19,55 +19,49 @@ namespace frou01.util.editor
         public int callbackOrder => 0;  
 
 
-        public List<ColliderGameObjectCuller> targetCGC = new List<ColliderGameObjectCuller>();
-        public List<ColliderOcclusionPortal> targetCOP = new List<ColliderOcclusionPortal>();
-        public List<ColliderBaseLOD> targetCBL = new List<ColliderBaseLOD>();
 
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
-            targetCGC = new List<ColliderGameObjectCuller>();
-            targetCOP = new List<ColliderOcclusionPortal>();
-            targetCBL = new List<ColliderBaseLOD>();
+            List<ColliderGameObjectCuller> targetCGC = new List<ColliderGameObjectCuller>();
+            List<ColliderOcclusionPortal> targetCOP = new List<ColliderOcclusionPortal>();
+            List<ColliderBaseLOD> targetCBL = new List<ColliderBaseLOD>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
                 targetCGC.AddRange(obj.GetComponentsInChildren<ColliderGameObjectCuller>(true));
                 targetCOP.AddRange(obj.GetComponentsInChildren<ColliderOcclusionPortal>(true));
                 targetCBL.AddRange(obj.GetComponentsInChildren<ColliderBaseLOD>(true));
             }
+
             string pattern = @"^(?=.*instanced).*$";//部分一致 instanced
             foreach (ColliderGameObjectCuller currentCGC in targetCGC)
             {
-                if (currentCGC != null)
+                ColliderGameObjectCuller_UdonBehaviour CGCUB = currentCGC.gameObject.AddUdonSharpComponentAlignSync<ColliderGameObjectCuller_UdonBehaviour>();
+                //Debug.Log("SetUp " + currentCGC.name);
+                foreach (GameObject go in currentCGC.objects)
                 {
-                    //Debug.Log("SetUp " + currentCGC.name);
-                    foreach (GameObject go in currentCGC.objects)
+                    if (go == null)
                     {
-                        if (go == null)
+                        Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
+                    }
+                    else
+                    {
+                        if (currentCGC.gameObject.activeInHierarchy) go.SetActive(false);
+                    }
+                }
+                CGCUB.objects = currentCGC.objects.Where(val => val != null).ToArray();
+                if (currentCGC.isStaticMode)
+                {
+                    List<GameObject> staticmeshes = new List<GameObject>();
+                    foreach (GameObject go in CGCUB.objects)
+                    {
+                        bool isinstanced = Regex.IsMatch(go.name, pattern);
+                        if (!isinstanced)
                         {
-                            Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
-                        }
-                        else
-                        {
-                            if (currentCGC.gameObject.activeInHierarchy) go.SetActive(false);
+                            staticmeshes.Add(go);
                         }
                     }
-                    currentCGC.objects = currentCGC.objects.Where(val => val != null).ToArray();
-                    if (currentCGC.isStaticMode)
-                    {
-                        List<GameObject> staticmeshes = new List<GameObject>();
-                        foreach (GameObject go in currentCGC.objects)
-                        {
-                            bool isinstanced = Regex.IsMatch(go.name, pattern);
-                            if (!isinstanced)
-                            {
-                                staticmeshes.Add(go);
-                            }
-                        }
-                        StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
-                    }
-                    ColliderGameObjectCuller_UdonBehaviour CGCUB = currentCGC.gameObject.AddUdonSharpComponentAlignSync<ColliderGameObjectCuller_UdonBehaviour>();
-                    CGCUB.objects = currentCGC.objects;
+                    StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
                 }
             }
             List<GameObject> existMeshes_Near = new List<GameObject>();
