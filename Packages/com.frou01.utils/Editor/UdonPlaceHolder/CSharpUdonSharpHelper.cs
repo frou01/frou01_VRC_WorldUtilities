@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UdonSharp;
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UdonSharpEditor;
+#endif
 using UnityEngine;
 using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
@@ -17,6 +20,7 @@ namespace frou01.util.editor
 
         public static bool HasSyncVariable(UdonBehaviour udon)
         {
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
             if (udon.SyncMethod != VRC.SDKBase.Networking.SyncType.None)
             {
                 var type = udon.GetType();
@@ -34,6 +38,7 @@ namespace frou01.util.editor
                 }
                 else { Debug.Log("fail get SyncMetadataTable"); }
             }
+#endif
             return false;
         }
 
@@ -48,6 +53,7 @@ namespace frou01.util.editor
         {
             UdonBehaviour multiAttachedUdonBehaviour = gameObject.GetComponent<UdonBehaviour>();
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
             UdonSharpBehaviour newSharpBeh = UdonSharpComponentExtensions.AddUdonSharpComponent(gameObject, type);
 
             if (multiAttachedUdonBehaviour)
@@ -59,7 +65,10 @@ namespace frou01.util.editor
                 UdonSharpEditorUtility.GetBackingUdonBehaviour(newSharpBeh).SyncMethod = DefaultSyncType;
             }
             return newSharpBeh;
+#else
+            return null;
+#endif
         }
-        #endregion
+#endregion
     }
 }

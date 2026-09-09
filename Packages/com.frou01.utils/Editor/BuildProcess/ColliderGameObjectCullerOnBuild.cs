@@ -23,53 +23,19 @@ namespace frou01.util.editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
-            List<ColliderGameObjectCuller> targetCGC = new List<ColliderGameObjectCuller>();
             List<ColliderOcclusionPortal> targetCOP = new List<ColliderOcclusionPortal>();
             List<ColliderBaseLOD> targetCBL = new List<ColliderBaseLOD>();
             foreach (GameObject obj in scene.GetRootGameObjects())
             {
-                targetCGC.AddRange(obj.GetComponentsInChildren<ColliderGameObjectCuller>(true));
                 targetCOP.AddRange(obj.GetComponentsInChildren<ColliderOcclusionPortal>(true));
                 targetCBL.AddRange(obj.GetComponentsInChildren<ColliderBaseLOD>(true));
             }
-
-            string pattern = @"^(?=.*instanced).*$";//部分一致 instanced
-            foreach (ColliderGameObjectCuller currentCGC in targetCGC)
-            {
-                ColliderGameObjectCuller_UdonBehaviour CGCUB = currentCGC.gameObject.AddUdonSharpComponentAlignSync<ColliderGameObjectCuller_UdonBehaviour>();
-                //Debug.Log("SetUp " + currentCGC.name);
-                foreach (GameObject go in currentCGC.objects)
-                {
-                    if (go == null)
-                    {
-                        Debug.LogError("Culler array has missing : " + GetPath(currentCGC.transform), currentCGC);
-                    }
-                    else
-                    {
-                        if (currentCGC.gameObject.activeInHierarchy) go.SetActive(false);
-                    }
-                }
-                CGCUB.objects = currentCGC.objects.Where(val => val != null).ToArray();
-                if (currentCGC.isStaticMode)
-                {
-                    List<GameObject> staticmeshes = new List<GameObject>();
-                    foreach (GameObject go in CGCUB.objects)
-                    {
-                        bool isinstanced = Regex.IsMatch(go.name, pattern);
-                        if (!isinstanced)
-                        {
-                            staticmeshes.Add(go);
-                        }
-                    }
-                    StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
-                }
-            }
-            List<GameObject> existMeshes_Near = new List<GameObject>();
-            List<GameObject> existMeshes_Dist = new List<GameObject>();
             foreach (ColliderBaseLOD currentCBL in targetCBL)
             {
                 if (currentCBL != null)
                 {
+                    List<GameObject> existMeshes_Near = new List<GameObject>();
+                    List<GameObject> existMeshes_Dist = new List<GameObject>();
                     foreach (GameObject go in currentCBL.NearObjects)
                     {
                         if (go == null)
@@ -114,8 +80,6 @@ namespace frou01.util.editor
                             }
                         }
                     }
-                    existMeshes_Near.Clear();
-                    existMeshes_Dist.Clear();
                 }
             }
             foreach (ColliderOcclusionPortal obj in targetCOP)
@@ -133,7 +97,7 @@ namespace frou01.util.editor
             string path = t.name;
             while (t.parent)
             {
-                path = t.parent.name + " , " + path;
+                path = t.parent.name + "/" + path;
                 t = t.parent;
             }
             return path;

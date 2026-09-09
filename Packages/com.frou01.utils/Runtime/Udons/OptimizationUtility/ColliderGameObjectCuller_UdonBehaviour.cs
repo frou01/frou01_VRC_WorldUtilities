@@ -6,7 +6,6 @@ using VRC.Udon;
 namespace frou01.util
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    [RequireComponent(typeof(ColliderGameObjectCuller))]
     public class ColliderGameObjectCuller_UdonBehaviour : UdonSharpBehaviour
     {
         [HideInInspector] public GameObject[] objects;
