@@ -89,6 +89,8 @@ namespace frou01.util.placeholder
             IA.pickups = targetPicks.ToArray();
             IA.currentState = true;
             IA.changeColliderState(false);
+
+            Object.DestroyImmediate(this);
         }
 
 

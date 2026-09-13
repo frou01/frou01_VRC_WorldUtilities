@@ -1,6 +1,7 @@
 using frou01.util.placeholder;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace frou01.util.editor
 {
     public class UdonPlaceHolder_Separater_BuildProcess : IProcessSceneWithReport
     {
-        public int callbackOrder => -1000;
+        public int callbackOrder => -100;
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {

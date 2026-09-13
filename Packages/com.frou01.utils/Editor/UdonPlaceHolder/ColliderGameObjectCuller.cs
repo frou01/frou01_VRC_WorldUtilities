@@ -1,4 +1,5 @@
 ﻿using frou01.util.editor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,6 +21,8 @@ namespace frou01.util.placeholder
         public GameObject[] objects;
         [Header("MoveableStatic Batching. \nIf object.name include \"instanced\", ignored.")]
         public bool isStaticMode;
+
+        [NonSerialized] public bool isCloned = false;
 
         [HideInInspector][SerializeField]ColliderGameObjectCuller_UdonBehaviour CGCUB;
 
@@ -52,25 +55,18 @@ namespace frou01.util.placeholder
                 }
                 StaticBatchingUtility.Combine(staticmeshes.ToArray(), null);
             }
-
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-            if (EditorApplication.isPlaying)
-            {
-                GameObject separating = Instantiate(this.gameObject, this.transform.parent,true);
-                foreach (Transform child in separating.transform)
-                {
-                    Destroy(child.gameObject);
-                }
-                foreach (UdonSharpBehaviour udonsharpbh in separating.GetComponents<UdonSharpBehaviour>())
-                {
-                    Destroy(udonsharpbh);
-                }
-                foreach (UdonBehaviour udon in separating.GetComponents<UdonBehaviour>())
-                {
-                    Destroy(udon);
-                }
-            }
 #endif
+        }
+
+        private void Start()
+        {
+            if (!isCloned)
+            {
+                this.gameObject.SetActive(false);
+                this.gameObject.SetActive(true);
+                isCloned = true;
+            }
         }
         private string GetPath(Transform t)
         {

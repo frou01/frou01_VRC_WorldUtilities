@@ -17,7 +17,7 @@ namespace frou01.util.placeholder
 
             repeaterBehaviour.targetAudioSource = targetAudioSource;
 
-            Object.Destroy(this);
+            Object.DestroyImmediate(this);
         }
     }
 }

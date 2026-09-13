@@ -24,7 +24,7 @@ namespace frou01.util.placeholder
             udon_Sleeper.animator = this.animator;
             udon_Sleeper.waitTime = this.waitTime;
 
-            Object.Destroy(this);
+            Object.DestroyImmediate(this);
 #endif
         }
     }
