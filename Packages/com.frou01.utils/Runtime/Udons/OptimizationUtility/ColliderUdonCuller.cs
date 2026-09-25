@@ -13,7 +13,7 @@ namespace frou01.util
         [Header("If PlayerChaser enter collider, this udon activate Udons.")]
         [Header("This Array will be used for auto-set all udonbehaviour to targetUdons")]
         public GameObject[] targetGameObject;
-        public UdonBehaviour[] targetUdons;
+        [HideInInspector]public UdonBehaviour[] targetUdons;
         public void OnTriggerEnter(Collider other)
         {
             if (playerChaser == other.gameObject)

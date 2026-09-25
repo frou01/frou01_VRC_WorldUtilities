@@ -1,25 +1,36 @@
 ﻿using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 using VRC.Udon;
 
 namespace frou01.util
 {
-    public class PickUpEventLinker : UdonSharpBehaviour
+    public class SyncEventLinker : UdonSharpBehaviour
     {
         [SerializeField] public UdonBehaviour[] targets;
 
-        public override void OnPickup()
+        public override void OnDeserialization()
         {
             foreach (UdonBehaviour aTarget in targets)
             {
-                aTarget.SendCustomEvent("OnPickup_");
+                aTarget.SendCustomEvent("OnDeserialization_");
             }
         }
-        public override void OnDrop()
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
         {
-            foreach (UdonBehaviour aTarget in targets)
+            if(player == Networking.LocalPlayer)
             {
-                aTarget.SendCustomEvent("OnDrop_");
+                foreach (UdonBehaviour aTarget in targets)
+                {
+                    aTarget.SendCustomEvent("OnOwnershipTransferred_BecomeLocal");
+                }
+            }
+            else
+            {
+                foreach (UdonBehaviour aTarget in targets)
+                {
+                    aTarget.SendCustomEvent("OnOwnershipTransferred_BecomeRemote");
+                }
             }
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

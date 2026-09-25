@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+namespace frou01.util.editor
+{
+    [CustomEditor(typeof(Revert_SerializedUdonProgramSource), true)]
+
+    public class RevertSerializedUdonProgramSource_cEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+            Revert_SerializedUdonProgramSource Target = (Revert_SerializedUdonProgramSource)target;
+            if (GUILayout.Button("Revert"))
+            {
+                Target.Revert();
+            }
+        }
+    }
+}
