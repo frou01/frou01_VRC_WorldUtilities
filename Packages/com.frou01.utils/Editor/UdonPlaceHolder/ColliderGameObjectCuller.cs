@@ -19,8 +19,8 @@ namespace frou01.util.placeholder
         [Header("If PlayerChaser enter collider, this udon activate assigned GameObjects.")]
         [FormerlySerializedAs("objects")]
         public GameObject[] objects;
-        [Header("MoveableStatic Batching. \nIf object.name include \"instanced\", ignored.")]
         public bool isStaticMode;
+        [Header("MoveableStatic Batching Option. \nIf object.name include \"instanced\", ignored.")]
 
         [NonSerialized] public bool isCloned = false;
 
