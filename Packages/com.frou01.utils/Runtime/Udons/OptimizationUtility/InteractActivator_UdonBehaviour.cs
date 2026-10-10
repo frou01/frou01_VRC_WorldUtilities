@@ -74,10 +74,28 @@ namespace frou01.util
                 }
                 else
                 {
-                    if (Vector3.Distance(handL.position, pos) < proximity ||
-                        Vector3.Distance(handR.position, pos) < proximity)
+                    if (Networking.LocalPlayer.GetPickupInHand(VRC_Pickup.PickupHand.Left))
                     {
-                        nextState = true;
+                        if (Vector3.Distance(handR.position, pos) < proximity)
+                        {
+                            nextState = true;
+                        }
+                    }
+                    else
+                    if (Networking.LocalPlayer.GetPickupInHand(VRC_Pickup.PickupHand.Right))
+                    {
+                        if (Vector3.Distance(handL.position, pos) < proximity)
+                        {
+                            nextState = true;
+                        }
+                    }
+                    else
+                    {
+                        if (Vector3.Distance(handL.position, pos) < proximity ||
+                            Vector3.Distance(handR.position, pos) < proximity)
+                        {
+                            nextState = true;
+                        }
                     }
                 }
             }
